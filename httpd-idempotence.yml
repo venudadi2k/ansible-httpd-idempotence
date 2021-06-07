@@ -1,0 +1,25 @@
+- hosts: 192.168.1.4
+  tasks:
+        - name: Install httpd
+          package: 
+                name: httpd
+                state: present
+
+        - name: Copy files
+          copy: 
+                src: "/var/www/html/home.html"
+                dest: "/var/www/html/index.html"
+          notify: Restart webserver
+
+        - name: Enabling port 80 for connectivity
+          ansible.posix.firewalld: 
+                                port: "80/tcp"
+                                state: enabled
+                                permanent: yes
+                                immediate: yes
+
+  handlers: 
+        - name: Restart webserver
+          service:
+                  name: httpd
+                  state: restarted
